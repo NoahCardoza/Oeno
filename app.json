@@ -1,0 +1,12 @@
+{
+  "name": "Oeno",
+  "displayName": "Oeno",
+  "expo": {
+    "name": "Oeno",
+    "slug": "Oeno",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
