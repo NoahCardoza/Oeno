@@ -36,7 +36,7 @@ const database = {
       id: 1,
       dayId: 1,
       timestamp: '12:31 PM',
-      observation: 'This was all I could think of.'
+      observation: 'Everything looks good. Taught my mouse to cartwheel.'
     }
   ],
   input: [
@@ -45,6 +45,18 @@ const database = {
       recordId: 1,
       tagId: 1,
       value: '7.38',
+    },
+    {
+      id: 2,
+      recordId: 1,
+      tagId: 2,
+      value: '63',
+    },
+    {
+      id: 3,
+      recordId: 1,
+      tagId: 3,
+      value: 'subtile',
     }
   ],
   tag: [
@@ -52,7 +64,21 @@ const database = {
       id: 1,
       type: 'float',
       name: 'pH',
-    }
+      color: '#abc'
+    },
+    {
+      id: 2,
+      type: 'float',
+      name: 'F',
+      color: '#cba'
+    },
+    {
+      id: 3,
+      type: 'text',
+      name: 'smell',
+      color: '#bca'
+    },
+
   ]
 };
 
