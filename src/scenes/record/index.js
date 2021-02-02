@@ -4,7 +4,7 @@ import { View, Text } from 'react-native';
 
 import { getInputsWithTagFromRecordId } from '@/database';
 
-import { Card, ListItem, Button, Icon } from 'react-native-elements'
+import { Card, ListItem, Badge } from 'react-native-elements'
 
 
 
@@ -35,9 +35,12 @@ function DaysScreen({ route, navigation }) {
         {
           inputs.map(({id, tag, value}) => {
             return (
-              <View key={id}>
-                <Text>{`${tag.name} ${value}`}</Text>
-              </View>
+              <ListItem key={id}>
+                <ListItem.Content>
+                  <ListItem.Title>{value}</ListItem.Title>
+                </ListItem.Content>
+                <Badge value={tag.name} badgeStyle={{ backgroundColor: tag.color }}/>
+              </ListItem>
             );
           })
         }
