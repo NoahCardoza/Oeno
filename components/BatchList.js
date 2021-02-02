@@ -1,11 +1,14 @@
 import React from 'react';
-import {Text} from 'react-native';
-import { ListItem, Avatar } from 'react-native-elements'
+import { ListItem } from 'react-native-elements'
 
-const BatchList = ({batches}) => batches.map((batch, i) => (
-      <ListItem key={i} bottomDivider>
+const BatchList = ({batches, navigation}) => batches.map(({id, title, days}) => (
+  <ListItem
+    key={id}
+    bottomDivider
+    onPress={() => navigation.push('Days', { days })}
+  >
         <ListItem.Content>
-          <ListItem.Title>{batch.title}</ListItem.Title>
+          <ListItem.Title>{title}</ListItem.Title>
         </ListItem.Content>
         <ListItem.Chevron />
       </ListItem>
