@@ -1,27 +1,33 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
+// import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import BatchList from './components/BatchList';
+
+const batches = [
+  {
+    id: 1,
+    title: 'Cabernet Sauvignon',
+  },
+  {
+    id: 2,
+    title: 'Carignan',
+  },
+];
 
 
 export default function App() {
   return (
-    <SafeAreaProvider>
-      <View style={styles.container}>
-        <Text>Testing...</Text>
-        <Text>Open up App.js to start working on your app!</Text>
-        <StatusBar style="auto" />
-      </View>
-    </SafeAreaProvider>
+    <SafeAreaView style={styles.container}>
+        <BatchList style={styles.batchList} batches={batches}></BatchList>
+        <StatusBar style="auto"></StatusBar>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
