@@ -2,11 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { ListItem } from 'react-native-elements'
 import { useAsync } from "react-async"
-
-
-
 import { getAllBatches } from '@/database';
-import { getAllBatchesUpdated } from '@/database/updatedData';
 
 const BatchList = ({ batches, navigation }) => batches.map(({ BatchId, BatchName }) => (
   <ListItem
@@ -22,7 +18,7 @@ const BatchList = ({ batches, navigation }) => batches.map(({ BatchId, BatchName
 ));
 
 function BatchesScreen({ navigation }) {
-  const { data, error } = useAsync({ promiseFn: getAllBatchesUpdated })
+  const { data, error } = useAsync({ promiseFn: getAllBatches })
   if (error) return console.error(error)
 
   return (
