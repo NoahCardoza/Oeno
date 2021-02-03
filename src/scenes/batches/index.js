@@ -1,29 +1,33 @@
 import React from 'react';
 import { View } from 'react-native';
 import { ListItem } from 'react-native-elements'
+import { useAsync } from "react-async"
+
+
 
 import { getAllBatches } from '@/database';
-import { getAllBatchesUpdated, getAllBatchesUpdated2 } from '@/database/updatedData';
+import { getAllBatchesUpdated } from '@/database/updatedData';
 
-const BatchList = ({ batches, navigation }) => batches.map(({ id, title }) => (
+const BatchList = ({ batches, navigation }) => batches.map(({ BatchId, BatchName }) => (
   <ListItem
     key={id}
     bottomDivider
-    onPress={() => navigation.push('Days', { batchId: id })}
+    onPress={() => navigation.push('Days', { batchId: BatchId })}
   >
     <ListItem.Content>
-      <ListItem.Title>{title}</ListItem.Title>
+      <ListItem.Title>{BatchName}</ListItem.Title>
     </ListItem.Content>
     <ListItem.Chevron />
   </ListItem>
 ));
 
 function BatchesScreen({ navigation }) {
-  const batches = getAllBatchesUpdated2();
-  const newBatches = getAllBatchesUpdated2();
+  const { data, error } = useAsync({ promiseFn: getAllBatchesUpdated })
+  if (error) return console.error(error)
+
   return (
     <View>
-      <BatchList batches={batches} navigation={navigation}></BatchList>
+      <BatchList batches={data || []} navigation={navigation}></BatchList>
     </View>
   );
 }
