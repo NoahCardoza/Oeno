@@ -1,3 +1,17 @@
+var SQLite = require('react-native-sqlite-storage');
+
+const errCallback = (err) => {
+  console.log("SQL Error: " + err);
+}
+
+
+const successCallback = () => {
+  console.log("Database successfully opened");
+}
+
+
+let db = SQLite.openDatabase({name: 'OenoDB.sqlite3', createFromLocation: 1}, successCallback, errCallback);
+
 const database = {
   batch: [
     {
