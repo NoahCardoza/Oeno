@@ -1,34 +1,12 @@
-var SQLite = require('react-native-sqlite-storage');
+const SQLite = require('react-native-sqlite-storage');
+SQLite.enablePromise(true);
 
-const errCallback = (err) => {
-  console.log("SQL Error: " + err);
+
+const connection = SQLite.openDatabase({name: 'OenoDB.sqlite3', createFromLocation: 1, location:'Library'})
+
+export const getAllBatchesUpdated = async () => {
+  const db = await connection;
+  const [results] = await db.executeSql('SELECT BatchId,BatchName FROM Batch')
+  
+  return results.rows.raw();
 }
-
-
-const successCallback = () => {
-console.log("Database successfully opened");
-}
-
-let db = SQLite.openDatabase({name: 'OenoDB.sqlite3', createFromLocation: 1}, successCallback, errCallback);
-
-export const getAllBatchesUpdated = () => {
-    let batches = [];
-    db.transaction(function (tx) {
-        tx.executeSql(
-          'SELECT ?,? FROM Batch',
-          ['BatchId', 'BatchName'],
-          (tx, results) => {
-            var temp = [];
-              for (let i = 0; i < results.rows.length; ++i) {
-                console.log(results.rows.item(i));
-              }
-          },
-          (err) => {
-            console.log(err);
-          }
-        );
-    });
-    return batches;
-}
-
-export default db;
