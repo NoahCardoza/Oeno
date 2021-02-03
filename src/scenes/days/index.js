@@ -1,18 +1,18 @@
 import React from 'react';
 import { View } from 'react-native';
 import { ListItem } from 'react-native-elements'
-
+import { useAsync } from "react-async"
 import { getDaysFromBatchId } from '@/database';
 
 
-const DayList = ({days, navigation}) => days.map(({id, date }) => (
+const DayList = ({days, navigation}) => days.map(({DayRecordId, DayRecordDate}) => (
   <ListItem
-    key={id}
+    key={DayRecordId}
     bottomDivider
-    onPress={() => navigation.push('Records', { dayId: id })}
+    onPress={() => navigation.push('Records', { dayRecordId: DayRecordId })}
   >
         <ListItem.Content>
-          <ListItem.Title>{date}</ListItem.Title>
+          <ListItem.Title>{DayRecordDate}</ListItem.Title>
         </ListItem.Content>
         <ListItem.Chevron />
       </ListItem>
@@ -20,10 +20,11 @@ const DayList = ({days, navigation}) => days.map(({id, date }) => (
 
 
 function DaysScreen({ route,  navigation }) {
-  const days = getDaysFromBatchId(route.params.batchId)
+  const { data, error } = useAsync({ promiseFn: getDaysFromBatchId, batchId: route.params.batchId });
+  if (error) return console.error(error);
   return (
     <View>
-      <DayList days={days} navigation={navigation}></DayList>
+      <DayList days={data || []} navigation={navigation}></DayList>
     </View>
   );
 }

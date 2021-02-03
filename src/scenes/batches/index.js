@@ -6,7 +6,7 @@ import { getAllBatches } from '@/database';
 
 const BatchList = ({ batches, navigation }) => batches.map(({ BatchId, BatchName }) => (
   <ListItem
-    key={id}
+    key={BatchId}
     bottomDivider
     onPress={() => navigation.push('Days', { batchId: BatchId })}
   >
@@ -20,6 +20,8 @@ const BatchList = ({ batches, navigation }) => batches.map(({ BatchId, BatchName
 function BatchesScreen({ navigation }) {
   const { data, error } = useAsync({ promiseFn: getAllBatches })
   if (error) return console.error(error)
+
+  //console.log('navigation:' + navigation);
 
   return (
     <View>
