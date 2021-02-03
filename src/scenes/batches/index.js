@@ -3,6 +3,7 @@ import { View } from 'react-native';
 import { ListItem } from 'react-native-elements'
 
 import { getAllBatches } from '@/database';
+import { getAllBatchesUpdated, getAllBatchesUpdated2 } from '@/database/updatedData';
 
 const BatchList = ({ batches, navigation }) => batches.map(({ id, title }) => (
   <ListItem
@@ -18,7 +19,8 @@ const BatchList = ({ batches, navigation }) => batches.map(({ id, title }) => (
 ));
 
 function BatchesScreen({ navigation }) {
-  const batches = getAllBatches()
+  const batches = getAllBatchesUpdated2();
+  const newBatches = getAllBatchesUpdated2();
   return (
     <View>
       <BatchList batches={batches} navigation={navigation}></BatchList>
