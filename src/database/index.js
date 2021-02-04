@@ -18,7 +18,6 @@ export const getDaysFromBatchId = async ({batchId}) => {
 
 export const getRecordsFromDayId = async ({dayRecordId}) => {
   const db = await connection;
-
   const [results] = await db.executeSql('SELECT * FROM Notes WHERE DayRecordId=?',[dayRecordId]);
   return results.rows.raw();
 }

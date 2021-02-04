@@ -25,11 +25,12 @@ const RecordList = ({records, navigation}) => records.map((record) => (
 
 function DaysScreen({ route, navigation }) {
   const { record } = route.params;
-  const inputs = getInputsWithTagFromRecordId(route.params.record.id)
+  console.log(route.params);
+  const inputs = getInputsWithTagFromRecordId(route.params.record.DayRecordId)
   return (
     <View>
       <Card>
-        <Text>{record.observation}</Text>
+        <Text>{record.NotesNotes}</Text>
         <Text/> 
         <Card.Divider/>
         {
