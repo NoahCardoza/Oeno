@@ -4,6 +4,8 @@ import { ListItem } from 'react-native-elements'
 
 import { getRecordsFromDayId } from '@/database';
 
+import PlusButton from '@/components/PlusButton';
+
 
 const RecordList = ({records, navigation}) => records.map((record) => (
   <ListItem
@@ -16,10 +18,20 @@ const RecordList = ({records, navigation}) => records.map((record) => (
         </ListItem.Content>
         <ListItem.Chevron />
       </ListItem>
-    ))
+))
+    
+export const RecordsScreenOptions = ({ route, navigation}) => ({
+  headerRight: () => (
+    <PlusButton onPress={
+      () => navigation.push('New Record', {
+        dayId: route.params.dayId
+      })
+    }/>
+  )
+})
 
 
-function DaysScreen({ route,  navigation }) {
+export function RecordsScreen({ route, navigation }) {
   const records = getRecordsFromDayId(route.params.dayId)
   return (
     <View>
@@ -27,5 +39,3 @@ function DaysScreen({ route,  navigation }) {
     </View>
   );
 }
-
-export default DaysScreen;
