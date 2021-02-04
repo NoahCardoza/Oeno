@@ -1,5 +1,6 @@
 import data from './data'
 import SQLite from 'react-native-sqlite-storage';
+import { useAsync } from "react-async"
 SQLite.enablePromise(true);
 
 const connection = SQLite.openDatabase({name: 'OenoDB.sqlite3', createFromLocation: 1, location:'Library'});
@@ -22,12 +23,25 @@ export const getRecordsFromDayId = async ({dayRecordId}) => {
   return results.rows.raw();
 }
 
-export const getInputsFromRecordId = (recordId) => data.input.filter(r => r.recordId === recordId);
+export const getTagById = async({TagId}) => {
+  const db = await connection;
+  const [results] = await db.executeSql('SELECT * FROM Tag WHERE TagId=?',[TagId]);
+  return results.rows.raw();
+}
 
-export const getTagById = (id) => data.tag.find(r => r.id === id);
-export const getInputsWithTagFromRecordId = (recordId) => getInputsFromRecordId(recordId).map(
-  input => ({
-    ...input,
-    tag: getTagById(input.tagId)
-  })
-);
+export const getEntryFromNotesId = async({notesId}) => {
+  const db = await connection;
+  const [results] = await db.executeSql('SELECT Connector.NotesId, Entry.EntryId, Entry.TagId, Entry.Value '+
+    'FROM Entry,Connector WHERE Entry.EntryId=Connector.EntryId AND Connector.NotesId=?',[notesId]);
+  return results.rows.raw();
+}
+
+export const getInputsWithTagFromNotesId = async({notesId}) => {
+  const db = await connection;
+  const [results] = await db.executeSql('SELECT Connector.NotesId,Entry.EntryId,Entry.TagId,Entry.Value,Tag.TagName,Tag.Type,Tag.Color ' +
+                                        'FROM Entry,Connector,Tag' +
+                                        ' WHERE Entry.EntryId=Connector.EntryId AND Entry.TagId=Tag.TagId AND Connector.NotesId=?',[notesId]);
+  return results.rows.raw();
+}
+
+

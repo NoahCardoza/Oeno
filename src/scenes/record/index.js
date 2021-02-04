@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Text } from 'react-native';
+import { useAsync } from "react-async"
 
-
-import { getInputsWithTagFromRecordId } from '@/database';
+import { getInputsWithTagFromNotesId } from '@/database';
 
 import { Card, ListItem, Badge } from 'react-native-elements'
 
@@ -25,29 +25,46 @@ const RecordList = ({records, navigation}) => records.map((record) => (
 
 function DaysScreen({ route, navigation }) {
   const { record } = route.params;
-  console.log(route.params);
-  const inputs = getInputsWithTagFromRecordId(route.params.record.DayRecordId)
-  return (
-    <View>
-      <Card>
-        <Text>{record.NotesNotes}</Text>
-        <Text/> 
-        <Card.Divider/>
-        {
-          inputs.map(({id, tag, value}) => {
-            return (
-              <ListItem key={id}>
-                <ListItem.Content>
-                  <ListItem.Title>{value}</ListItem.Title>
-                </ListItem.Content>
-                <Badge value={tag.name} badgeStyle={{ backgroundColor: tag.color }}/>
-              </ListItem>
-            );
-          })
-        }
-      </Card>
-    </View>
-  );
+  const { data, error } = useAsync({ promiseFn: getInputsWithTagFromNotesId, notesId: route.params.record.NotesId });
+
+  if (error) {
+    return console.error(error);
+  }
+
+  if(data) {
+    return (
+      <View>
+        <Card>
+          <Text>{record.NotesNotes}</Text>
+          <Text/> 
+          <Card.Divider/>
+          {
+            data.map(({TagId, TagName, Value, Color}) => {
+              return (
+                <ListItem key={TagId}>
+                  <ListItem.Content>
+                    <ListItem.Title>{Value}</ListItem.Title>
+                  </ListItem.Content>
+                  <Badge value={TagName} badgeStyle={{ backgroundColor: Color }}/>
+                </ListItem>
+              );
+            })
+          }
+        </Card>
+      </View>
+    );
+  }
+  else {
+    return (
+      <View>
+        <Card>
+          <Text>{record.NotesNotes}</Text>
+          <Text/> 
+          <Card.Divider/>
+        </Card>
+      </View>
+    );
+  }
 }
 
 export default DaysScreen;

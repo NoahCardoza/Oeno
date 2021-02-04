@@ -20,11 +20,8 @@ const RecordList = ({records, navigation}) => records.map((record) => (
 
 
 function DaysScreen({ route,  navigation }) {
-  console.log(route.params);
-  const records = getRecordsFromDayId(route.params.dayRecordId );
-
   const { data, error } = useAsync({ promiseFn: getRecordsFromDayId, dayRecordId: route.params.dayRecordId });
-  if (error) console.log(error);
+  if (error) return console.error(error);
 
   return (
     <View>
