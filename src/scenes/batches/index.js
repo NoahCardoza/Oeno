@@ -18,10 +18,10 @@ const BatchList = ({ batches, navigation }) => batches.map(({ BatchId, BatchName
 ));
 
 function BatchesScreen({ navigation }) {
-  const { data, error } = useAsync({ promiseFn: getAllBatches })
-  if (error) return console.error(error)
+  const { data, error } = useAsync({ promiseFn: getAllBatches });
+  if (error) return console.error(error);
 
-  //console.log('navigation:' + navigation);
+  console.log(data);
 
   return (
     <View>

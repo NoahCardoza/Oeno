@@ -1,18 +1,18 @@
 import React from 'react';
 import { View } from 'react-native';
 import { ListItem } from 'react-native-elements'
-
+import { useAsync } from "react-async"
 import { getRecordsFromDayId } from '@/database';
 
 
 const RecordList = ({records, navigation}) => records.map((record) => (
   <ListItem
-    key={record.id}
+    key={record.NotesId}
     bottomDivider
     onPress={() => navigation.push('Record', { record })}
   >
         <ListItem.Content>
-          <ListItem.Title>{record.timestamp}</ListItem.Title>
+          <ListItem.Title>{record.NotesDate}</ListItem.Title>
         </ListItem.Content>
         <ListItem.Chevron />
       </ListItem>
@@ -20,10 +20,15 @@ const RecordList = ({records, navigation}) => records.map((record) => (
 
 
 function DaysScreen({ route,  navigation }) {
-  const records = getRecordsFromDayId(route.params.dayId)
+  console.log(route.params);
+  const records = getRecordsFromDayId(route.params.dayRecordId );
+
+  const { data, error } = useAsync({ promiseFn: getRecordsFromDayId, dayRecordId: route.params.dayRecordId });
+  if (error) console.log(error);
+
   return (
     <View>
-      <RecordList records={records} navigation={navigation}></RecordList>
+      <RecordList records={data || []} navigation={navigation}></RecordList>
     </View>
   );
 }

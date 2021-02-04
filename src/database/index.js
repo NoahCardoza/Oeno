@@ -16,12 +16,15 @@ export const getDaysFromBatchId = async ({batchId}) => {
   return results.rows.raw();
 }
 
-export const getDaysFromBatchIdUpdated = async () => {
-  
+export const getRecordsFromDayId = async ({dayRecordId}) => {
+  const db = await connection;
+
+  const [results] = await db.executeSql('SELECT * FROM Notes WHERE DayRecordId=?',[dayRecordId]);
+  return results.rows.raw();
 }
 
-export const getRecordsFromDayId = (dayId) => data.record.filter(r => r.dayId === dayId);
 export const getInputsFromRecordId = (recordId) => data.input.filter(r => r.recordId === recordId);
+
 export const getTagById = (id) => data.tag.find(r => r.id === id);
 export const getInputsWithTagFromRecordId = (recordId) => getInputsFromRecordId(recordId).map(
   input => ({

@@ -22,6 +22,7 @@ const DayList = ({days, navigation}) => days.map(({DayRecordId, DayRecordDate}) 
 function DaysScreen({ route,  navigation }) {
   const { data, error } = useAsync({ promiseFn: getDaysFromBatchId, batchId: route.params.batchId });
   if (error) return console.error(error);
+
   return (
     <View>
       <DayList days={data || []} navigation={navigation}></DayList>
