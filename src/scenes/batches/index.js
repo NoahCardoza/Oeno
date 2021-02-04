@@ -3,6 +3,7 @@ import { View, Alert } from 'react-native';
 import { ListItem, Icon } from 'react-native-elements'
 import { useAsync } from "react-async"
 import { getAllBatches } from '@/database';
+import PlusButton from '@/components/PlusButton';
 
 let Batches;
 
@@ -37,15 +38,12 @@ const PromptUser = ({ prompt, onSuccess }) => Alert.prompt(
 
 export const BatchesScreenOptions = {
   headerRight: () => (
-      <Icon
-        style={{ margin: 10}}
-        name="add"
-        color="#0A84FF"
-        onPress={() => PromptUser({
+    <PlusButton onPress={
+      () => PromptUser({
           prompt: "Enter a new batch name:",
           onSuccess: BatchName => Batches.setData([{ BatchId: 10, BatchName }, ...Batches.data])
-        })}  
-    />
+      })
+    }/>
   ),
 }
 
