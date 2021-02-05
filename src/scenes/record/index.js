@@ -28,23 +28,21 @@ function DaysScreen({ route, navigation }) {
   const inputs = getInputsWithTagFromRecordId(route.params.record.id)
   return (
     <View>
-      <Card>
+      <Card containerStyle={{marginBottom: 20}}>
         <Text>{record.observation}</Text>
-        <Text/> 
-        <Card.Divider/>
+      </Card>
         {
-          inputs.map(({id, tag, value}) => {
+          inputs.map(({id, tag, value}, i) => {
             return (
-              <ListItem key={id}>
+              <ListItem key={id} bottomDivider topDivider={i === 0}>
                 <ListItem.Content>
                   <ListItem.Title>{value}</ListItem.Title>
                 </ListItem.Content>
-                <Badge value={tag.name} badgeStyle={{ backgroundColor: tag.color }}/>
+                <Badge value={tag.name} textStyle={{ fontWeight: 'bold', fontSize: 15 }} badgeStyle={{ padding: 3, height: null }}/>
               </ListItem>
             );
           })
         }
-      </Card>
     </View>
   );
 }
