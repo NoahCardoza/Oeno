@@ -1,8 +1,10 @@
 import data from './data'
 import SQLite from 'react-native-sqlite-storage';
 import { useAsync } from "react-async"
+import { add } from 'react-native-reanimated';
 SQLite.enablePromise(true);
 
+// Get entries from DB
 const connection = SQLite.openDatabase({name: 'OenoDB.sqlite3', createFromLocation: 1, location:'Library'});
 export const getAllBatches = async () => {
   const db = await connection;
@@ -48,4 +50,48 @@ export const getAllTags = async() => {
   const db = await connection;
   const [results] = await db.executeSql('SELECT * FROM Tag');
   return results.rows.raw();
+}
+
+// Add entries to DB
+export const createBatch = async({batchName, batchDesc=''}) => {
+  if(!batchName) {
+    throw 'batchName is null';
+  }
+  else {
+    const db = await connection;
+    const [results] = await db.executeSql('INSERT INTO Batch(BatchStartDate, BatchName, BatchDescription) VALUES(DATE(\'NOW\'),?,?)', [batchName, batchDesc]);
+
+    if(results.rowsAffected > 0) {
+      const [newBatches] = await db.executeSql('SELECT * FROM Batch');
+      let rows = newBatches.rows.raw();
+      let batchId = rows[rows.length - 1].BatchId;
+      await createDayFromBatchId({batchId: batchId}).catch((err) => console.log(err));
+      return rows;
+    }
+    else {
+      throw 'New batch not created';
+    }
+  }
+}
+
+export const createDayFromBatchId = async({batchId}) => {
+  if(!batchId) {
+    throw 'batchId is null';
+  }
+  else {
+    const db = await connection;
+    const [currentDate] = await db.executeSql('SELECT * FROM DayRecord WHERE DayRecordDate=Date(\'now\') AND BatchId=?', [batchId]);
+
+    if(currentDate && currentDate.rows.raw().length <= 0) {
+      const [addDay] = await db.executeSql('INSERT INTO DayRecord(BatchId, DayRecordDate) VALUES(?,Date(\'now\'))', [batchId]);
+
+      if(addDay.rowsAffected > 0) {
+        const [result] = await db.executeSql('SELECT * FROM DayRecord WHERE BatchId=?', [batchId]);
+        return result.rows.raw();
+      }
+    }
+
+    throw 'New day not created';
+
+  }
 }
