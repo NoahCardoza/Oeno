@@ -1,4 +1,8 @@
-import { combineReducers } from 'redux';
+import { createStore } from 'redux';
+import AsyncStorage from '@react-native-community/async-storage'
+import { persistStore, persistReducer } from 'redux-persist'
+
+
 
 const INITIAL_STATE = {
   batchesLastId: 1,
@@ -64,9 +68,9 @@ const appReducer = (state = INITIAL_STATE, { type, payload }) => {
         tags: [...tags, payload]
       }
     default:
-      if (!type.startsWith('@@')) {
-        console.warn('No case for:', { type, payload })
-      }
+      // if (!type.startsWith('@@')) {
+      //   console.warn('No case for:', { type, payload })
+      // }
       return state
   }
 };
@@ -93,6 +97,16 @@ export const addRecord = ({BatchId, RecordObservation, RecordInputs}) => (
 );
 
 
-export default combineReducers({
-  app: appReducer
-});
+const persistedReducer = persistReducer({
+    key: 'persistedRootStore',
+    storage: AsyncStorage
+}, appReducer)
+
+export const store = createStore(persistedReducer)
+export const persistor = persistStore(store)
+
+
+
+// export default combineReducers({
+//   app: appReducer
+// });

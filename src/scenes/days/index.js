@@ -4,7 +4,7 @@ import { ListItem } from 'react-native-elements'
 
 import { connect } from 'react-redux';
 
-const mapStateToProps = ({ app: { batches } }, props) => ({ batch: batches.find(({BatchId}) => BatchId === props.route.params.BatchId) });
+const mapStateToProps = ({ batches }, props) => ({ batch: batches.find(({BatchId}) => BatchId === props.route.params.BatchId) });
 
 
 const addDays = function(date, days) {

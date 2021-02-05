@@ -21,7 +21,7 @@ const SELECT_ONE = 'Select One'
 const NEW_TAG = 'New Tag'
 
   
-const TagPicker = connect(({ app: { tags } }) => ({ tags }))(({ onValueChange, tags, ...props }) => {
+const TagPicker = connect(({ tags }) => ({ tags }))(({ onValueChange, tags, ...props }) => {
   const generatedTags = [SELECT_ONE, ...tags, NEW_TAG]
   return (
     <Picker {...props} onValueChange={onValueChange}>
