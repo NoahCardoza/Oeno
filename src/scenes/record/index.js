@@ -25,20 +25,19 @@ const RecordList = ({records, navigation}) => records.map((record) => (
 
 function DaysScreen({ route, navigation }) {
   const { record } = route.params;
-  const inputs = getInputsWithTagFromRecordId(route.params.record.id)
   return (
     <View>
       <Card containerStyle={{marginBottom: 20}}>
-        <Text>{record.observation}</Text>
+        <Text>{record.RecordObservation}</Text>
       </Card>
         {
-          inputs.map(({id, tag, value}, i) => {
+          record.RecordInputs.map(({ InputValue, InputTag }, i) => {
             return (
-              <ListItem key={id} bottomDivider topDivider={i === 0}>
+              <ListItem key={i} bottomDivider topDivider={i === 0}>
                 <ListItem.Content>
-                  <ListItem.Title>{value}</ListItem.Title>
+                  <ListItem.Title>{InputValue}</ListItem.Title>
                 </ListItem.Content>
-                <Badge value={tag.name} textStyle={{ fontWeight: 'bold', fontSize: 15 }} badgeStyle={{ padding: 3, height: null }}/>
+                <Badge value={InputTag} textStyle={{ fontWeight: 'bold', fontSize: 15 }} badgeStyle={{ padding: 3, height: null }}/>
               </ListItem>
             );
           })
@@ -47,4 +46,8 @@ function DaysScreen({ route, navigation }) {
   );
 }
 
-export default DaysScreen;
+const mapStateToProps = ({batches}) => ({ batches })
+
+
+
+export default DaysScreen //connect()(DaysScreen);
