@@ -11,7 +11,7 @@ import { connect, } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 
-const mapStateToProps = ({ app: { batches } }) => ({ batches });
+const mapStateToProps = ({ batches }) => ({ batches });
 const mapDispatchToProps = dispatch => bindActionCreators({ addBatch }, dispatch);
 const ReduxConnector = connect(mapStateToProps, mapDispatchToProps);
 

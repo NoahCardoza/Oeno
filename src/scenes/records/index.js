@@ -2,14 +2,12 @@ import React from 'react';
 import { View } from 'react-native';
 import { ListItem } from 'react-native-elements'
 
-import { getRecordsFromDayId } from '@/database';
-
 import PlusButton from '@/components/PlusButton';
 
 import { connect } from 'react-redux';
 
 
-const mapStateToProps = ({ app: { records } }, { route }) => {
+const mapStateToProps = ({ records }, { route }) => {
   const startDate = route.params.date;
   const endDate = startDate + (24 * 60 * 60 * 1000);
   return {
