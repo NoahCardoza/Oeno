@@ -5,37 +5,42 @@ import { ListItem, Input, Button, BottomSheet } from 'react-native-elements'
 
 import { getAllTags } from '@/database';
 
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { addRecord, addTag } from '@/store';
+import RecordInputList from '@/components/RecordInputList'
+
+const mapDispatchToProps = dispatch => bindActionCreators({ addRecord }, dispatch);
+
 
 const MultiLineTextInput = (props) => (
   <TextInput multiline numberOfLines={4} {...props}></TextInput>
 )
 
-const selectTagsForPicker = () =>  [{id: 0, name: 'Select One' }, ...getAllTags(), {id: -1, name: 'New Tag'}]
-  
-const TagPicker = ({onValueChange, ...props}) => {
-  const [tags, setTags] = React.useState(selectTagsForPicker())
+const SELECT_ONE = 'Select One'
+const NEW_TAG = 'New Tag'
 
+  
+const TagPicker = connect(({ app: { tags } }) => ({ tags }))(({ onValueChange, tags, ...props }) => {
+  const generatedTags = [SELECT_ONE, ...tags, NEW_TAG]
   return (
-    <Picker {...props} onValueChange={value => onValueChange({
-      value,
-      tags,
-      setTags
-    })}>
+    <Picker {...props} onValueChange={onValueChange}>
       {
-        tags.map(({ id, name }) => (
-          <Picker.Item key={id} value={id} label={name} />
+        generatedTags.map((TagName, i) => (
+          <Picker.Item key={i} value={TagName} label={TagName} />
         ))
       }
     </Picker>
   )
-}
+})
 
-const AddNewInput = ({
+const AddNewInput = connect(null, dispatch => bindActionCreators({ addTag }, dispatch))(({
   isVisible,
   setIsVisible,
   onCancle,
   onSuccess,
-  navigation
+  navigation,
+  addTag
 }) => {
   const [inputIsDisabled, setInputIsDisabled] = React.useState(true);
   const [selectedValue, setSelectedValue] = React.useState(null);
@@ -45,18 +50,16 @@ const AddNewInput = ({
     <BottomSheet isVisible={isVisible}>
       <TagPicker
         selectedValue={selectedValue}
-        onValueChange={({ value, tags, setTags }) => {
-          if (value === -1) {
+        onValueChange={(value) => {
+          if (value === NEW_TAG) {
             Prompt({
               prompt: 'New tag name:',
-              onSuccess: tag => {
-                setTags([{id: 20, name: tag }, ...tags])
-              } 
+              onSuccess: addTag
             })
             setSelectedValue(0)
             setInputIsDisabled(true)
           } else {
-            setInputIsDisabled(value === 0)
+            setInputIsDisabled(value === SELECT_ONE)
             setSelectedValue(value)
           }
         }}
@@ -71,31 +74,48 @@ const AddNewInput = ({
         style={{ margin: 10, marginBottom: 30 }}
         title="Record"
         onPress={() => onSuccess({
-          tagId: selectedValue,
-          value: value
+          InputValue: value,
+          InputTag: selectedValue
         })}
       />
     </BottomSheet>
   );
-}
+})
 
-export default function NewRecordScreen({ route, navigation }) {
+export default connect(null, mapDispatchToProps)(function NewRecordScreen({ addRecord, route, navigation }) {
   const [isVisible, setIsVisible] = React.useState(false);
+  const [observation, setObservation] = React.useState('');
+  const [inputs, setInputs] = React.useState([]);
   return (
     <View>
       <Input
         style={{ marginTop: 10 }}
         InputComponent={MultiLineTextInput}
+        onChangeText={setObservation}
       />
-      <Button style={{ marginHorizontal: 10 }} title="Record Value" onPress={() => setIsVisible(true)} />
+      <Button style={{ margin: 10 }} title="Record Value" onPress={() => setIsVisible(true)} />
       <AddNewInput
         {...{ isVisible, setIsVisible, navigation }}
         onCancle={() => {setIsVisible(false)}}
         onSuccess={input => {
           setIsVisible(false)
-          console.log(input)
+          setInputs([...inputs, input])
         }}
       />
+      {
+        RecordInputList(inputs)
+      }
+      <Button style={{ margin: 10 }} title="Save"
+        onPress={
+          () => {
+            navigation.pop();
+            addRecord({
+              BatchId: route.params.BatchId,
+              RecordObservation: observation,
+              RecordInputs: inputs
+            })
+          }
+        } />
     </View>
   );
-}
+})
