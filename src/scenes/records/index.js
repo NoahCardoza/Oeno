@@ -6,20 +6,17 @@ import { getRecordsFromDayId } from '@/database';
 
 import PlusButton from '@/components/PlusButton';
 
+import { connect } from 'react-redux';
 
-const RecordList = ({records, navigation}) => records.map((record) => (
-  <ListItem
-    key={record.id}
-    bottomDivider
-    onPress={() => navigation.push('Record', { record })}
-  >
-        <ListItem.Content>
-          <ListItem.Title>{record.timestamp}</ListItem.Title>
-        </ListItem.Content>
-        <ListItem.Chevron />
-      </ListItem>
-))
-    
+const mapStateToProps = ({ app: { records } }, { route }) => {
+  const startDate = route.params.date;
+  const endDate = startDate + (24 * 60 * 60 * 1000);
+  return {
+    records: records.filter(({ BatchId, RecordTimestamp }) =>
+      BatchId === route.params.BatchId && RecordTimestamp >= startDate && RecordTimestamp < endDate)
+  }
+}
+
 export const RecordsScreenOptions = ({ route, navigation}) => ({
   headerRight: () => (
     <PlusButton onPress={
@@ -31,11 +28,23 @@ export const RecordsScreenOptions = ({ route, navigation}) => ({
 })
 
 
-export function RecordsScreen({ route, navigation }) {
-  const records = getRecordsFromDayId(route.params.dayId)
+function RecordsScreenComponent({ records, navigation }) {
   return (
     <View>
-      <RecordList records={records} navigation={navigation}></RecordList>
+      {records.map((record) => (
+        <ListItem
+          key={record.RecordId}
+          bottomDivider
+          onPress={() => navigation.push('Record', { record })}
+        >
+          <ListItem.Content>
+            <ListItem.Title>{new Date(record.RecordTimestamp).toLocaleString().split(', ')[1]}</ListItem.Title>
+          </ListItem.Content>
+          <ListItem.Chevron />
+        </ListItem>
+      ))}
     </View>
   );
 }
+
+export const RecordsScreen = connect(mapStateToProps)(RecordsScreenComponent);
