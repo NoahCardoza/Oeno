@@ -11,6 +11,13 @@ const INITIAL_STATE = {
       RecordId: 1,
       BatchId: 1,
       RecordTimestamp: Date.now() - (1 * 24 * 60 * 60 * 1000),
+      RecordObservation: 'Today I got wine drunk and taught my pig to fly.',
+      RecordInputs: [
+        {
+          InputValue: 7.45,
+          InputTag: 'pH'
+        }
+      ]
     }
   ]
 };

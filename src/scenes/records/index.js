@@ -8,6 +8,7 @@ import PlusButton from '@/components/PlusButton';
 
 import { connect } from 'react-redux';
 
+
 const mapStateToProps = ({ app: { records } }, { route }) => {
   const startDate = route.params.date;
   const endDate = startDate + (24 * 60 * 60 * 1000);
@@ -17,11 +18,13 @@ const mapStateToProps = ({ app: { records } }, { route }) => {
   }
 }
 
+const ReduxConnector = connect(mapStateToProps);
+
 export const RecordsScreenOptions = ({ route, navigation}) => ({
   headerRight: () => (
     <PlusButton onPress={
       () => navigation.push('New Record', {
-        dayId: route.params.dayId
+        BatchId: route.params.BatchId
       })
     }/>
   )
@@ -47,4 +50,4 @@ function RecordsScreenComponent({ records, navigation }) {
   );
 }
 
-export const RecordsScreen = connect(mapStateToProps)(RecordsScreenComponent);
+export const RecordsScreen = ReduxConnector(RecordsScreenComponent);
