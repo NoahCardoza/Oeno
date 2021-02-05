@@ -132,5 +132,115 @@ export const createTag = async({tagType='text', tagName, color='#abc'}) => {
   throw 'New tag not created';
 }
 
+export const createRecord = async({notesId, tagId, value}) => {
+  if(!tagName || !notesId || !value) {
+    throw 'One or more values are null';
+  }
+
+  const db = await connection;
+  const [entry] = await db.executeSql('INSERT INTO Tag(TagId,Value) VALUES(?,?)', [tagId, value]);
+
+  if(entry && entry.rowsAffected() > 0) {
+    const [oldEntries] = await db.executeSql('SELECT * FROM Entry');
+
+    if(oldEntries) {
+      let entriesRows = oldEntries.rows.raw();
+      let entryId = entriesRows[entriesRows.length - 1].EntryId;
+      const [connection] = await db.executeSql('INSERT INTO Connector(NotesId,EntryId) VALUES(?,?)', [notesId, entryId]);
+
+      if(connection && connection.rowsAffected() > 0) {
+        const [result] = await db.executeSql('SELECT Connector.NotesId,Entry.EntryId,Entry.TagId,Entry.Value,Tag.TagName,Tag.TagType,Tag.Color ' +
+                                              'FROM Entry,Connector,Tag' +
+                                              ' WHERE Entry.EntryId=Connector.EntryId AND Entry.TagId=Tag.TagId AND Connector.NotesId=?',[notesId]);
+        return result.rows.raw();
+      }
+    }
+  }
+
+  throw 'Record was not created';
+}
+
+// Modifiers
+export const modifyRecordDescription = async({notesId, note}) => {
+  if(!notesId && !note) {
+    throw 'One or more parameters was null';
+  }
+
+  const db = await connection;
+  const [recordEntry] = await db.executeSql('UPDATE Notes SET NotesNotes=? WHERE NotesId=?', [note, notesId]);
+
+  if(recordEntry && recordEntry.rowsAffected() > 0) {
+    const [result] = await db.executeSql('SELECT NotesId, NotesNotes FROM Notes WHERE NotesId=?',[notesId]);
+    return result.rows.raw();
+  }
+
+  throw 'Record description was not updated';
+}
+
+export const modifyTagInRecord = async({entryId, tagId}) => {
+  if(!entryId && !tagId) {
+    throw 'One or more parameters was null';
+  }
+
+  const db = await connection;
+  const [recordEntry] = await db.executeSql('UPDATE Entry SET TagId=? WHERE EntryId=?', [tagId, entryId]);
+
+  if(recordEntry && recordEntry.rowsAffected() > 0) {
+    const [result] = await db.executeSql('SELECT Entry.EntryId,Tag.TagId,Tag.TagType,Tag.TagName,Tag.Color ' + 
+                                          'FROM Entry,Tag WHERE Entry.TagId=Tag.TagId AND Entry.EntryId=? AND Tag.TagId=?',[entryId, tagId]);
+    return result.rows.raw();
+  }
+  
+
+  throw 'Tag was not updated';
+}
+
+export const modifyEntryValue = async({entryId, value}) => {
+  if(!entryId && !value) {
+    throw 'One or more parameters was null';
+  }
+
+  const db = await connection;
+  const [recordEntry] = await db.executeSql('UPDATE Entry SET Value=? WHERE EntryId=?', [value, entryId]);
+
+  if(recordEntry && recordEntry.rowsAffected() > 0) {
+    const [result] = await db.executeSql('SELECT EntryId, Value FROM Entry WHERE EntryId=?',[entryId]);
+    return result.rows.raw();
+  }
+
+  throw 'Entry value was not updated';
+}
+
+// deleters
+export const deleteEntry = async({entryId}) => {
+  if(!entryId && !note) {
+    throw 'One or more parameters was null';
+  }
 
 
+  
+
+  throw 'Record description was not updated';
+}
+
+export const deleteTag = async({tagId}) => {
+  if(!notesId && !note) {
+    throw 'One or more parameters was null';
+  }
+
+
+  
+
+  throw 'Record description was not updated';
+}
+
+export const deleteBatch = async({batchId}) => {
+  if(!notesId && !note) {
+    throw 'One or more parameters was null';
+  }
+
+
+  
+
+  throw 'Record description was not updated';
+}

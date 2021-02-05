@@ -21,8 +21,6 @@ function BatchesScreen({ navigation }) {
   const { data, error } = useAsync({ promiseFn: getAllBatches });
   if (error) return console.error(error);
 
-  console.log(data);
-
   return (
     <View>
       <BatchList batches={data || []} navigation={navigation}></BatchList>
