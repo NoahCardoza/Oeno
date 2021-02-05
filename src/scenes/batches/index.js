@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Alert } from 'react-native';
-import { ListItem, Icon } from 'react-native-elements'
+import { View } from 'react-native';
+import { ListItem } from 'react-native-elements'
 import { useAsync } from "react-async"
 import { getAllBatches } from '@/database';
 import PlusButton from '@/components/PlusButton';
+import Prompt from '@/utils/prompt';
 
 let Batches;
 
@@ -20,26 +21,10 @@ const BatchList = ({ batches, navigation }) => batches.map(({ BatchId, BatchName
   </ListItem>
 ));
 
-const PromptUser = ({ prompt, onSuccess }) => Alert.prompt(
-      prompt,
-      null,
-      [
-        {
-          text: "Cancel",
-          style: "cancel"
-        },
-        {
-          text: "Save",
-          onPress: onSuccess
-        }
-      ],
-      "plain-text"
-    )
-
 export const BatchesScreenOptions = {
   headerRight: () => (
     <PlusButton onPress={
-      () => PromptUser({
+      () => Prompt({
           prompt: "Enter a new batch name:",
           onSuccess: BatchName => Batches.setData([{ BatchId: 10, BatchName }, ...Batches.data])
       })
