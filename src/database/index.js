@@ -40,7 +40,7 @@ export const getEntryFromNotesId = async({notesId}) => {
 
 export const getInputsWithTagFromNotesId = async({notesId}) => {
   const db = await connection;
-  const [results] = await db.executeSql('SELECT Connector.NotesId,Entry.EntryId,Entry.TagId,Entry.Value,Tag.TagName,Tag.Type,Tag.Color ' +
+  const [results] = await db.executeSql('SELECT Connector.NotesId,Entry.EntryId,Entry.TagId,Entry.Value,Tag.TagName,Tag.TagType,Tag.Color ' +
                                         'FROM Entry,Connector,Tag' +
                                         ' WHERE Entry.EntryId=Connector.EntryId AND Entry.TagId=Tag.TagId AND Connector.NotesId=?',[notesId]);
   return results.rows.raw();
@@ -96,16 +96,13 @@ export const createDayFromBatchId = async({batchId}) => {
   }
 }
 
-export const createRecordFromDayRecordId = async({dayRecordId, note}) => {
+export const createRecordFromDayRecordId = async({dayRecordId, note=''}) => {
   if(!dayRecordId) {
     throw 'batchId is null';
   }
-  if(!note) {
-    note='';
-  }
 
   const db = await connection;
-  const [recordEntry] = await db.executeSql('INSERT INTO Notes(DayRecordId, NotesDate, NotesNotes) VALUES(?,DATETIME(\'NOW\'),?)); ', [dayRecordId, note]);
+  const [recordEntry] = await db.executeSql('INSERT INTO Notes(DayRecordId, NotesDate, NotesNotes) VALUES(?,DATETIME(\'NOW\'),?))', [dayRecordId, note]);
 
   if(recordEntry.rowsAffected > 0) {
     const [result] = await db.executeSql('SELECT * FROM Notes WHERE dayRecordId=?', [dayRecordId]);
@@ -114,5 +111,26 @@ export const createRecordFromDayRecordId = async({dayRecordId, note}) => {
 
   throw 'New record not created';
 }
+
+export const createTag = async({tagType='text', tagName, color='#abc'}) => {
+  if(!tagName) {
+    throw 'tagName is null';
+  }
+
+  const db = await connection;
+  const [matchingTags] = await db.executeSql('SELECT TagId WHERE TagType=? AND TagName=?', [tagType, tagName]);
+  
+  if(matchingTags && matchingTags.rows.raw().length <= 0) {
+    const [addTag] = await db.executeSql('INSERT INTO Tag(TagType,TagName,TagColor) VALUES(?,?,?)', [tagType, tagName, color]);
+
+      if(addTag.rowsAffected > 0) {
+        const [result] = await db.executeSql('SELECT * FROM Tag');
+        return result.rows.raw();
+      }
+  }
+
+  throw 'New tag not created';
+}
+
 
 
