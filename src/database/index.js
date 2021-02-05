@@ -44,4 +44,8 @@ export const getInputsWithTagFromNotesId = async({notesId}) => {
   return results.rows.raw();
 }
 
-
+export const getAllTags = async() => {
+  const db = await connection;
+  const [results] = await db.executeSql('SELECT * FROM Tag');
+  return results.rows.raw();
+}
