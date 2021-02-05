@@ -214,33 +214,76 @@ export const modifyEntryValue = async({entryId, value}) => {
 // deleters
 export const deleteEntry = async({entryId}) => {
   if(!entryId && !note) {
-    throw 'One or more parameters was null';
+    throw 'entryId was null';
   }
 
+  const [removedEntry] = await db.executeSql('DELETE FROM Tag WHERE EntryId=?',[entryId]);
+  const [removedConnector] = await db.executeSql('DELETE FROM Connector WHERE EntryId=?',[entryId]);
+  let numRemovedEntry = removedEntry.rowsAffected()
+  let numRemovedConnector = removedConnector.rowsAffected()
 
-  
-
-  throw 'Record description was not updated';
+  if(!removedEntry && numRemovedEntry <= 0) {
+    throw 'Entry not updated!';
+  }
+  if(!removedConnector && numRemovedConnector <= 0) {
+    throw 'Connector not updated!';
+  }
+  return numRemovedEntry + numRemovedConnector;
 }
 
 export const deleteTag = async({tagId}) => {
   if(!notesId && !note) {
-    throw 'One or more parameters was null';
+    throw 'tagId was null';
+  }
+
+  const db = await connection;
+  const [listTags] = await db.executeSql('SELECT EntryId FROM Entry Where TagId=?', [tagId]);
+  if(listTags && oldEntries.rows.raw().length <= 0) {
+    const [removedEntry] = await db.executeSql('DELETE FROM Tag WHERE TagId=?',[tagId]);
+    return removedEntry.rowsAffected();
   }
 
 
-  
-
-  throw 'Record description was not updated';
+  throw 'Remove all references to this tag before removing it!';
 }
 
 export const deleteBatch = async({batchId}) => {
-  if(!notesId && !note) {
-    throw 'One or more parameters was null';
+  if(!batchId) {
+    throw 'branchId was null';
   }
 
+  const db = await connection;
+  const [dayRecordIds] = await db.executeSql('SELECT DayRecordId FROM DayRecord WHERE BatchId=?', [batchId]);
+  const [resultBatch] = await db.executeSql('DELETE FROM Batch WHERE BatchId=?', [batchId]);
 
-  
+  if(dayRecordIds) {
+    let dayRecordRows = newBatches.rows.raw();
+    await db.executeSql('DELETE FROM DayRecord WHERE BatchId=?', [batchId]);
+    for(let i = 0; i < dayRecordRows.length; ++i) {
+      let dayRecordId = dayRecordRows[i].DayRecordId;
+      const [notesIds] = await db.executeSql('SELECT NotesId FROM Notes WHERE DayRecordId=?', [dayRecordId]);
+      await db.executeSql('DELETE FROM Notes WHERE DayRecordId=?', [dayRecordId]);
 
-  throw 'Record description was not updated';
+      if(notesIds) {
+        let notesRows = notesIds.rows.raw();
+
+        for(let j = 0; j < notesRows.length; ++j) {
+          let notesId = notesRows[j].NotesId;
+          const [entryIds] = await db.executeSql('SELECT EntryId FROM Connector WHERE NotesId=?', [notesId]);
+          await db.executeSql('DELETE FROM Connector WHERE NotesId=?', [notesId]);
+
+          if(entryIds) {
+            let entryRows = entryIds.rows.raw();
+
+            for(let k = 0; k < notesRows.length; ++k) {
+              let entryId = entryRows[k].EntryId;
+              await db.executeSql('DELETE FROM Entry WHERE EntryId=?', [entryId]);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return resultBatch.rowsAffected();
 }
