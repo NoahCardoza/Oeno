@@ -95,3 +95,24 @@ export const createDayFromBatchId = async({batchId}) => {
 
   }
 }
+
+export const createRecordFromDayRecordId = async({dayRecordId, note}) => {
+  if(!dayRecordId) {
+    throw 'batchId is null';
+  }
+  if(!note) {
+    note='';
+  }
+
+  const db = await connection;
+  const [recordEntry] = await db.executeSql('INSERT INTO Notes(DayRecordId, NotesDate, NotesNotes) VALUES(?,DATETIME(\'NOW\'),?)); ', [dayRecordId, note]);
+
+  if(recordEntry.rowsAffected > 0) {
+    const [result] = await db.executeSql('SELECT * FROM Notes WHERE dayRecordId=?', [dayRecordId]);
+    return result.rows.raw();
+  }
+
+  throw 'New record not created';
+}
+
+
