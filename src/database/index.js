@@ -14,6 +14,7 @@ export const getAllBatches = async () => {
 export const getDaysFromBatchId = (batchId) => data.day.filter(r => r.batchId === batchId);
 export const getRecordsFromDayId = (dayId) => data.record.filter(r => r.dayId === dayId);
 export const getInputsFromRecordId = (recordId) => data.input.filter(r => r.recordId === recordId);
+export const getAllTags = () => data.tag;
 export const getTagById = (id) => data.tag.find(r => r.id === id);
 export const getInputsWithTagFromRecordId = (recordId) => getInputsFromRecordId(recordId).map(
   input => ({
