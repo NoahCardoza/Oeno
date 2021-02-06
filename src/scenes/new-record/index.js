@@ -37,7 +37,7 @@ const TagPicker = connect(({ tags }) => ({ tags }))(({ onValueChange, tags, ...p
 const AddNewInput = connect(null, dispatch => bindActionCreators({ addTag }, dispatch))(({
   isVisible,
   setIsVisible,
-  onCancle,
+  onCancel,
   onSuccess,
   navigation,
   addTag
@@ -68,7 +68,7 @@ const AddNewInput = connect(null, dispatch => bindActionCreators({ addTag }, dis
       <Button
           style={{ margin: 10, marginTop: 100 }}
           buttonStyle={{backgroundColor: 'red'}}
-          title="Cancle" onPress={onCancle} />
+          title="Cancel" onPress={onCancel} />
       <Button
         disabled={inputIsDisabled}
         style={{ margin: 10, marginBottom: 30 }}
@@ -96,7 +96,7 @@ export default connect(null, mapDispatchToProps)(function NewRecordScreen({ addR
       <Button style={{ margin: 10 }} title="Record Value" onPress={() => setIsVisible(true)} />
       <AddNewInput
         {...{ isVisible, setIsVisible, navigation }}
-        onCancle={() => {setIsVisible(false)}}
+        onCancel={() => {setIsVisible(false)}}
         onSuccess={input => {
           setIsVisible(false)
           setInputs([...inputs, input])
