@@ -6,6 +6,8 @@ import PlusButton from '@/components/PlusButton';
 
 import { connect } from 'react-redux';
 
+const isIOS = require('react-native').Platform.OS === 'ios';
+
 
 const mapStateToProps = ({ records }, { route }) => {
   const startDate = route.params.date;
@@ -29,23 +31,51 @@ export const RecordsScreenOptions = ({ route, navigation}) => ({
 })
 
 
-function RecordsScreenComponent({ records, navigation }) {
-  return (
-    <View>
-      {records.map((record) => (
-        <ListItem
-          key={record.RecordId}
-          bottomDivider
-          onPress={() => navigation.push('Record', { record })}
-        >
-          <ListItem.Content>
-            <ListItem.Title>{new Date(record.RecordTimestamp).toLocaleString().split(', ')[1]}</ListItem.Title>
-          </ListItem.Content>
-          <ListItem.Chevron />
-        </ListItem>
-      ))}
-    </View>
-  );
+function RecordsScreenComponent({ records, navigation, route }) {
+  if(isIOS) {
+    return (
+      <View>
+        {records.map((record) => (
+          <ListItem
+            key={record.RecordId}
+            bottomDivider
+            onPress={() => navigation.push('Record', { record })}
+          >
+            <ListItem.Content>
+              <ListItem.Title>{new Date(record.RecordTimestamp).toLocaleString().split(', ')[1]}</ListItem.Title>
+            </ListItem.Content>
+            <ListItem.Chevron />
+          </ListItem>
+        ))}
+      </View>
+    );
+  }
+  else {
+    return (
+      <View>
+        {records.map((record) => (
+          <ListItem
+            key={record.RecordId}
+            bottomDivider
+            onPress={() => navigation.push('Record', { record })}
+          >
+            <ListItem.Content>
+              <ListItem.Title>{new Date(record.RecordTimestamp).toLocaleString().split(', ')[1]}</ListItem.Title>
+            </ListItem.Content>
+            <ListItem.Chevron />
+          </ListItem>
+        ))}
+        <View style={{marginTop: 20}}>
+          <PlusButton 
+            onPress={
+              () => navigation.push('New Record', {
+              BatchId: route.params.BatchId
+            })
+          }/>
+        </View>
+      </View>
+    );
+  }
 }
 
 export const RecordsScreen = ReduxConnector(RecordsScreenComponent);

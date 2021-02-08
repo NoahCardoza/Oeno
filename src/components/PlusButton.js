@@ -10,4 +10,4 @@ const PlusButton = ({ onPress }) => (
   />
 )
 
-export default PlusButton
+export default PlusButton;
